@@ -32,7 +32,7 @@ router.post('/register', (req, res) => {
 
 // Step 2: Student Profile Capture
 router.post('/profile', (req, res) => {
-  const { email, age, standard, location, interests, strengths } = req.body;
+  const { email, age, standard, location, interests, strengths, languages, aspirations, dreamGoals } = req.body;
 
   if (!email || !age || !standard) {
     return res.status(400).json({ error: 'Email, age, and standard are required' });
@@ -48,8 +48,11 @@ router.post('/profile', (req, res) => {
   user.location = location;
   user.interests = interests;
   user.strengths = strengths;
+  user.languages = languages;
+  user.aspirations = aspirations;
+  user.dreamGoals = dreamGoals;
 
-  return res.status(200).json({ message: 'Profile updated effectively', user });
+  return res.status(200).json({ message: 'Extreme profile updated successfully', user });
 });
 
 // Get User Profile
