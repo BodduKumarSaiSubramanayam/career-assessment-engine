@@ -9,8 +9,6 @@ function Assessment() {
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [processingStep, setProcessingStep] = useState(0);
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes
   const navigate = useNavigate();
 
@@ -86,18 +84,7 @@ function Assessment() {
         const data = await res.json();
         if (res.ok) {
           localStorage.setItem('assessmentResults', JSON.stringify(data.results));
-          setIsProcessing(true);
-          let currentStep = 0;
-          const intervalId = setInterval(() => {
-            currentStep += 1;
-            if (currentStep >= 4) {
-              clearInterval(intervalId);
-              navigate('/dashboard');
-            } else {
-              setProcessingStep(currentStep);
-            }
-          }, 1800);
-          return; // Prevent resetting submitting flag since we are transitioning
+          navigate('/scoring');
         } else {
           alert(data.error || 'Submission failed');
         }
@@ -109,54 +96,8 @@ function Assessment() {
     }
   };
 
-  if (isProcessing) {
-    const processSteps = [
-      "Running Scoring & Weightage Algorithm...",
-      "Activating Career Matching Engine...",
-      "Generating Stream & Subject Recommendations...",
-      "Building Actionable Career Roadmap..."
-    ];
 
-    return (
-      <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
-        <div className="glass-card" style={{ padding: '4rem', textAlign: 'center', maxWidth: '600px', width: '100%' }}>
-          <div style={{ marginBottom: '2rem' }}>
-            <div className="spinner" style={{ width: '60px', height: '60px', border: '4px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto' }}></div>
-          </div>
-          <h2 style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>Architecting Your Future</h2>
 
-          <div style={{ textAlign: 'left', marginTop: '2rem' }}>
-            {processSteps.map((step, idx) => (
-              <div key={idx} style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                marginBottom: '1rem',
-                opacity: processingStep >= idx ? 1 : 0.3,
-                transform: processingStep >= idx ? 'translateX(0)' : 'translateX(-10px)',
-                transition: 'all 0.5s ease'
-              }}>
-                <div style={{
-                  width: '24px', height: '24px', borderRadius: '50%',
-                  background: processingStep > idx ? '#10B981' : processingStep === idx ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  flexShrink: 0
-                }}>
-                  {processingStep > idx && <CheckCircle2 size={14} color="white" />}
-                </div>
-                <span style={{
-                  fontSize: '1.1rem',
-                  color: processingStep === idx ? 'var(--primary)' : 'var(--text-main)',
-                  fontWeight: processingStep === idx ? 600 : 400
-                }}>{step}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        <style dangerouslySetInnerHTML={{ __html: `\n          @keyframes spin {\n            to { transform: rotate(360deg); }\n          }\n        ` }} />
-      </div>
-    );
-  }
 
   if (loading) return <div style={{ textAlign: 'center', marginTop: '20vh' }}><h2>Loading Assessment Modules...</h2></div>;
   if (sections.length === 0) return <div style={{ textAlign: 'center', marginTop: '20vh' }}><h2>No questions found</h2></div>;
