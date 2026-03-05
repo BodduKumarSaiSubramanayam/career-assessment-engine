@@ -1,0 +1,21 @@
+services:
+  # Backend Server
+  - type: web
+    name: assessment-backend
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Add other necessary env vars here, like MONGO_URI if using MongoDB
+    
+  # Frontend Application
+  - type: web
+    name: assessment-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: # The URL of the backend service (needs to be updated after backend is created)
